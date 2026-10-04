@@ -65,3 +65,4 @@ reference ui/
 # as deployment drift. The file is build output, not source.
 lib/build-info.ts
 .dev.vars
+.claude/settings.local.json
