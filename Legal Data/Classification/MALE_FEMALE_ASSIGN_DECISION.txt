@@ -1,0 +1,29 @@
+Immediate Physical Safety Risk
+Survivors of domestic violence may feel safer disclosing details to a female paralegal, especially if the abuser is male.
+If the applicant explicitly requests a female officer for comfort or safety, AI should respect that preference.
+Conversely, if the applicant is a male survivor of abuse, he may prefer a male paralegal to avoid stigma.
+2. Applicant Vulnerability & Isolation
+Proxy representation (e.g., Ripon reporting for Moyuri) may require a female paralegal if the subject is a woman facing gender‑based violence.
+In cases of severe financial or mobility constraints, AI should flag the need for empathetic handling, often better facilitated by female paralegals in culturally sensitive contexts.
+3. Communication Constraints
+If the applicant has restricted contact windows due to surveillance or coercion, a female paralegal may be less intimidating and more trusted by women under control of male abusers.
+AI should not decide alone but highlight that gender‑sensitive assignment could improve disclosure.
+Cyber bullying of a girl
+4. Legal Merit & Time Sensitivity
+For custody disputes or dowry harassment cases, female paralegals may be better positioned to understand nuances of women’s rights laws.
+For property or financial disputes where male applicants are involved, a male paralegal might be more culturally acceptable in certain contexts.
+
+
+
+
+
+Now we will create the application system and AI summary for DLAO/paralegal thats sole purpose will be efficiently help them to decide
+
+precisely which legal act it falls on
+
+disable/female will get priority over nomal cases
+and the urgency of an application will be determined by
+1. /home/adrib/legal_voice_agent/Legal Data/Classification/factors.txt
+
+and decide whom to assign based on the application type ( male or female agent )
+2. /home/adrib/legal_voice_agent/Legal Data/Classification/MALE_FEMALE_ASSIGN_DECISION.txt

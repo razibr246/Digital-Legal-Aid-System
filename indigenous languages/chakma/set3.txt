@@ -1,0 +1,65 @@
+### 7. Negotiable Instruments Act, 1881 এর section 138 এ বর্ণিত চেক ডিসঅনার সম্পর্কিত অভিযোগ (অনধিক তিন লক্ষ টাকা মূল্যমান চেকের ক্ষেত্রে)
+
+
+
+* **Legal Intent:** Complaints regarding bounced or dishonored cheques (valued up to three lakh taka) due to insufficient funds.
+* **Target Phonetic Chakma Terms:**
+* টিয়া / টেয়া (Money / Taka)
+* ধার / দার (Debt / Borrow)
+* ফুরি আহানা / ফেরত (Return / Bounce)
+
+
+* **Spelling & Pronunciation Variants:**
+* টিয়া -> টিয়া, টেয়া, টীয়া
+* ফুরি আহানা -> ফুরিহানা, ফুরি
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "সে আমাকে তিন লক্ষ টাকার চেক দিয়েছিল, কিন্তু ব্যাংকে টিয়া (টাকা) নাই বলে চেক ফুরি আহানা (ফেরত/ডিজঅনার) হয়েছে।"
+* "আমার পাওনা টিয়া (টাকা) না দিয়ে সে চেক ডিজঅনার করেছে।"
+* "দার (ধার) নেওয়া টাকার চেক বাউন্স হওয়ায় Negotiable Instruments Act এ মামলা করেছি।"
+
+
+
+### 8. যৌতুক নিরোধ আইন, ২০১৮ এর ধারা ৩ ও ৪ এ বর্ণিত যৌতুক সম্পর্কিত অভিযোগ
+
+
+
+* **Legal Intent:** Complaints regarding the demanding, giving, or taking of dowry during or after marriage.
+* **Target Phonetic Chakma Terms:**
+* বিয়া (Marriage / Wedding)
+* খুজানা / দাভি (Demand / Ask for)
+* সোনাদানা (Gold / Jewelry)
+
+
+* **Spelling & Pronunciation Variants:**
+* খুজানা -> খুজনা, কুজানা
+* দাভি -> দাবি, দাফি
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "বিয়া (বিয়ে) এর সময় তারা অনেক যৌতুক এবং সোনাদানা খুজানা (দাবি) করেছে।"
+* "যৌতুক নিরোধ আইন অনুযায়ী টিয়া (টাকা) খুজানা (দাবি) করার জন্য অভিযোগ করেছি।"
+* "শ্বশুরবাড়ির লোকজন যৌতুক হিসেবে অনেক কিছু দাভি (দাবি) করছে।"
+
+
+
+### 9. নারী ও শিশু নির্যাতন দমন আইন, ২০০০ এর ধারা ১১(গ) তে বর্ণিত যৌতুকের জন্য নির্যাতন সম্পর্কিত অভিযোগ
+
+
+
+* **Legal Intent:** Complaints involving physical or mental abuse, torture, or violence inflicted on a woman for dowry demands.
+* **Target Phonetic Chakma Terms:**
+* দুক দানা / কস্ট দানা (Torture / Oppress / Give pain)
+* পিডানা / মারা (Beat / Hit)
+
+
+* **Spelling & Pronunciation Variants:**
+* দুক দানা -> দুগ দানা, দুকদানা
+* পিডানা -> পিডনা, পিটানা
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "যৌতুকের টাকার জন্য স্বামী আমাকে দুক দানা (নির্যাতন) করেছে।"
+* "টাকা না দেওয়ায় সে আমাকে অনেক পিডানা (মারধর) করেছে।"
+* "নারী ও শিশু নির্যাতন দমন আইনে যৌতুকের জন্য দুক দানা (নির্যাতন) এর মামলা করতে চাই।"

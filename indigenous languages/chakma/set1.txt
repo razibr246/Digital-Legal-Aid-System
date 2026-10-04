@@ -1,0 +1,68 @@
+### 1. পারিবারিক আদালত আইন, ২০২৩ এর ধারা ৫-তে উল্লিখিত বিষয়
+
+
+
+* **Legal Intent:** Disputes regarding marriage, divorce, restitution of conjugal rights, dower, and child guardianship.
+* **Target Phonetic Chakma Terms:**
+* মাঘী / মেইলা (Wife / Woman)
+* জামেই (Husband)
+* ছারাছারি / ছারা (Divorce / Separation)
+* গুরো / পুয়া (Child)
+
+
+* **Spelling & Pronunciation Variants:**
+* মাঘী -> মাগী, মেলা
+* ছারাছারি -> চারাচারি, ছাড়াছাড়ি
+* গুরো -> গুড়ো, গুরোং
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "আমার মাঘী (স্ত্রী) এর সাথে অনেকদিন ধরে পারিবারিক বিরোধ চলছে।"
+* "জামেই ছারাছারি (ডিভোর্স) দিতে চায়, কিন্তু মোহরানা দিচ্ছে না।"
+* "আমার গুরো (বাচ্চা) এর কাস্টডি নিয়ে পারিবারিক আদালতে মামলা করতে চাই।"
+
+
+
+### 2. বাড়ি ভাড়া নিয়ন্ত্রণ আইন, ১৯৯১-তে উল্লিখিত বিরোধ
+
+
+
+* **Legal Intent:** Conflicts over house rent arrears, eviction without notice, and arbitrary rent increments.
+* **Target Phonetic Chakma Terms:**
+* ঘর / ভিদে (House / Home)
+* বাড়া (Rent)
+* খেদেই দানা (Eviction / Drive away)
+
+
+* **Spelling & Pronunciation Variants:**
+* বাড়া -> বারা, ভাড়া
+* খেদেই -> খেদায়, খেদি
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "ভাড়াটিয়া তিন মাস ধরে ঘর বাড়া (বাড়ি ভাড়া) দিচ্ছে না।"
+* "মালিক আমাকে জোর করে ঘর থেকে খেদেই দানা (উচ্ছেদ করতে) চাইছে।"
+* "বাড়ি ভাড়া নিয়ন্ত্রণ আইনে বাড়া (ভাড়া) বৃদ্ধির বিরুদ্ধে অভিযোগ আছে।"
+
+
+
+### 3. সিভিল জজ আদালতের এখতিয়ারভুক্ত বণ্টন সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disagreements over the partition, measurement, and boundary demarcation of inherited or shared property/land.
+* **Target Phonetic Chakma Terms:**
+* জুম / জাদি (Land / Estate)
+* বাঘ (Share / Portion)
+* আড়া / ছীমানা (Boundary / Border)
+
+
+* **Spelling & Pronunciation Variants:**
+* বাঘ -> বাগ, ভাগ
+* আড়া -> আরা, আড়াং
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "বাবার রেখে যাওয়া জুম (জমি) বণ্টন নিয়ে ভাইদের সাথে বিরোধ।"
+* "আমার সম্পত্তির বাঘ (অংশ) আমাকে বুঝিয়ে দিচ্ছে না।"
+* "জমির আড়া (সীমানা) নিয়ে সিভিল জজ আদালতে মামলা চলছে।"

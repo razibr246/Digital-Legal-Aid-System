@@ -1,0 +1,243 @@
+﻿### 1. Case Analysis: DLAO Perspective & Technical Implementations
+
+
+For the DLAO to effectively prioritize and manage cases, the AI system must uncover specific risk factors and vulnerabilities for each citizen, supported by targeted technological solutions.
+
+
+* **Case 1: Moyuri Akter (Joypurhat)**
+* **What the AI must find out (Urgency):** The system needs to identify the immediate physical safety risk of ongoing domestic violence. It must detect her highly restricted communication constraints, such as a 20-minute safe contact window on Fridays. It must also flag her incomplete identity status (inaccessible NID) and the fact that the initial report is second-hand information from a proxy.
+
+
+
+
+* **Tech to implement:** The system must implement Attribute-Based Access Control (ABAC) and field-level encryption so only the assigned DLAO can view her survival data. It requires a "Zero-Outbound SMS lock" to prevent automated alerts from reaching her abusive husband's or mother-in-law's phone. A "Proxy Safety Toggle" must be used to defer strict NID requirements until localized, discreet human verification can occur.
+
+
+
+
+
+
+
+
+* **Case 2: Ripon (Moyuri's Authorized Representative)**
+* **What the AI must find out (Urgency):** The system must identify Ripon's extreme vulnerability as a proxy representative who is visually impaired and unable to navigate visual forms, PDFs, or visual OTPs. It must establish his representation authority while noting his non-visual status constraints.
+
+
+
+
+* **Tech to implement:** A 16699 Voice-Biometric IVR and Conversational Bangla Intake Agent must be deployed. This allows Ripon to authenticate via In-Call Audio-OTP and complete tasks using speech pattern recognition and a plain Bangla voice-bot, completely bypassing CAPTCHAs. The system must clearly display the scope of his authority in the shared record.
+
+
+
+
+
+
+
+
+* **Case 3: Nabila (Jhenaidah)**
+* **What the AI must find out (Urgency):** The AI must detect the high urgency of rapidly spreading harm caused by fake/altered images. It must flag the presence of highly sensitive evidence and identify the need for an urgent cross-agency referral to another competent authority.
+
+
+
+
+* **Tech to implement:** The system requires role-restricted access to lock down sensitive image evidence. It must utilize a tracked referral module to send the complete digital package (reason, history, expected action) to the receiving authority, complete with automated acknowledgements, deadlines, and an escalation protocol (Jurisdiction Tug-of-War safeguard).
+
+
+
+
+
+
+
+
+* **Case 4: Nuching Marma (Khagrachari)**
+* **What the AI must find out (Urgency):** The AI must identify language barriers (speaking Marma and limited Bangla) and her reliance on a Union Digital Centre (UDC) entrepreneur for assistance. It must note the risks of unreliable internet connectivity and potential document quality issues.
+
+
+
+
+* **Tech to implement:** An Offline-First Progressive Web App (PWA) must be utilized so data can be captured locally and synced later without duplication. The system must track provenance to distinguish between what Nuching said and what the UDC entrepreneur typed/translated. A Document Summarization & Checklist Agent should be used to verify uploaded documents and flag missing items.
+
+
+
+
+
+
+
+
+* **Case 5: Abdul Malek (Barguna)**
+* **What the AI must find out (Urgency):** The AI must flag the urgency of a long-running, stagnant case (seven months old) and the financial strain of traveling just to check updates. It must recognize his unstable contact method (using a shop's phone) and the panel lawyer's lack of accountability.
+
+
+
+
+* **Tech to implement:** The system must trigger a Lawyer Change / Pattern Alert if the assigned panel lawyer misses updates or hearings. It must provide a low-bandwidth, non-smartphone status access route (like USSD or voice) so Malek can securely check his case without traveling.
+
+
+
+
+
+
+
+
+
+
+---
+
+
+### 2. Explained Summary for the AI Developer
+
+
+**Objective:** You are tasked with building a unified Digital Legal Aid System (DLAS) architecture that serves multiple distinct citizen needs and provider roles without fragmenting the data into isolated silos.
+
+
+**Core Architecture & Philosophy:**
+
+
+* **One Shared Record:** The system must utilize a single Application ID upon submission that transitions to a Case ID upon acceptance. Every actor (16699 agent, DLAO, Mediator, UDC, Panel Lawyer) must interact with a role-appropriate view of the *same* authoritative record.
+
+
+
+
+* **Omnichannel "Doors":** Citizens must be able to enter the system via 16699/IVR, USSD/SMS, Web/Mobile, or assisted UDC pathways, all routing to the same database.
+
+
+
+
+* **Provenance & Consent:** The system must strictly distinguish between information confirmed directly by an applicant, reported by a proxy, translated by an intermediary, or inferred by AI.
+
+
+
+
+
+
+**The Role of AI:**
+
+
+* **Assist, Do Not Replace:** AI is used for hands-free Bangla intake (Conversational Agent), document summarization, settlement agreement drafting, and multi-agent triage. However, AI must *never* make final eligibility decisions, auto-reject cases, or provide specific legal advice.
+
+
+
+
+* **Explainable Triage:** Instead of opaque algorithmic scoring, the AI must use Tag-Based Clustering to group applications with high-risk visual tags (e.g., immediate safety risk, vulnerability). The AI surfaces the evidence, but a human DLAO must make the final priority judgment.
+
+
+
+
+
+
+**Safety & Resilience:**
+
+
+* **Zero-Outbound Locks:** For domestic abuse cases, the AI must suppress all automated digital alerts to prevent tipping off abusers.
+
+
+
+
+* **Offline Capability:** Features like UDC portals and E-Signatures must function offline with temporary UUIDs, syncing securely with integrity verification once connectivity returns.
+
+
+
+
+
+
+---
+
+
+### 3. Developer To-Do List
+
+
+**Phase 1: Core Architecture & Database Setup**
+
+
+* [ ] Implement a centralized database where a single Application ID seamlessly converts to a permanent Case ID upon approval.
+
+
+
+
+* [ ] Build Attribute-Based Access Control (ABAC) to enforce strict role-based privacy across DLAOs, Mediators, and Lawyers.
+
+
+
+
+* [ ] Develop an audit trail system that immutably logs who entered data, their authority status, and the channel used (provenance tracking).
+
+
+
+
+
+
+**Phase 2: Multichannel Intake & Accessibility (The "Five Doors")**
+
+
+* [ ] Build a Conversational Bangla Intake Agent (Voice-bot) integrated with the 16699 helpline for screen-free access.
+
+
+
+
+* [ ] Implement Voice-Biometric authentication and In-Call Audio-OTPs to bypass visual CAPTCHAs.
+
+
+
+
+* [ ] Develop a Low-Bandwidth Progressive Web App (PWA) with safe offline caching and adaptive light modes for rural users.
+
+
+
+
+* [ ] Build an Offline-First Sync engine allowing UDC workers to log cases offline and idempotently sync them later without duplication.
+
+
+
+
+
+
+**Phase 3: AI Case Management & Triage**
+
+
+* [ ] Develop a Multi-Agent Case-Triage Pipeline to assign visual metadata tags (Safety Risk, Proxy/PWD) and cluster high-priority cases at the top of the DLAO queue.
+
+
+
+
+* [ ] Implement a "Proxy Safety Toggle" and "Zero-Outbound SMS lock" to defer NID requirements and block dangerous automated alerts.
+
+
+
+
+* [ ] Build a Document Summarization & Checklist Agent that scans uploaded files against case-type requirements and flags missing items.
+
+
+
+
+* [ ] Create a Duplicate/Fraud-Risk Detection system using fuzzy matching that flags similarities for side-by-side human review (no auto-merging).
+
+
+
+
+
+
+**Phase 4: Provider Workflows & Automation**
+
+
+* [ ] Create a DLAO operational dashboard showing new, pending, and overdue matters.
+
+
+
+
+* [ ] Build a Tracked Referral system for jurisdiction transfers, including acknowledgement tracking and escalation rules for "Jurisdiction Tug-of-War".
+
+
+
+
+* [ ] Develop a Panel Lawyer management module that monitors updates and triggers an AI pattern alert for repeated inactivity.
+
+
+
+
+* [ ] Implement an Asynchronous Secure E-Signature module capable of offline signing and cryptographic integrity verification.
+
+
+
+
+* [ ] Build a Settlement Drafting Assistant that takes mediator notes and generates draft agreements, visibly marking AI-inferred text for human review.
+*

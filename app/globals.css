@@ -1,0 +1,282 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * shadcn/ui theme, mapped onto the existing portal design tokens
+ * (lib/ui/theme/tokens.css) so there is a single source of truth for colour.
+ *
+ * `:root:root` (not `:root`) is deliberate: app/portal.css is imported after
+ * this file and still declares legacy generic names such as --muted and --card
+ * on `:root`. Doubling the selector keeps the shadcn tokens winning without
+ * having to rename the reference design's variables.
+ */
+:root:root {
+  --background: var(--portal-bg, #f8fafc);
+  --foreground: var(--portal-text, #0f172a);
+
+  --card: var(--portal-white, #ffffff);
+  --card-foreground: var(--portal-text, #0f172a);
+
+  --popover: var(--portal-white, #ffffff);
+  --popover-foreground: var(--portal-text, #0f172a);
+
+  --primary: var(--portal-accent, #15803d);
+  --primary-foreground: var(--portal-text-on-accent, #ffffff);
+
+  --secondary: var(--portal-bg-subtle, #f1f5f9);
+  --secondary-foreground: var(--portal-text, #0f172a);
+
+  --muted: var(--portal-bg-subtle, #f1f5f9);
+  --muted-foreground: var(--portal-text-secondary, #475569);
+
+  --accent: var(--portal-accent-subtle, #f0fdf4);
+  --accent-foreground: var(--portal-accent-text, #14532d);
+
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+
+  --border: var(--portal-border, #e2e8f0);
+  --input: var(--portal-border-strong, #cbd5e1);
+  --ring: var(--portal-accent, #15803d);
+
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+}
+
+body {
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-bn), Arial, Helvetica, sans-serif;
+}
+
+/* ---------- Universal chat widget ----------
+   Desktop: a docked card in the bottom-right, stacked above the 16699 call
+   button so the portal's primary action keeps its position.
+   Mobile: a full-screen sheet. A fixed bottom offset collapses the panel once
+   the on-screen keyboard shrinks the dynamic viewport, so below 640px the
+   sheet is anchored to the whole visual viewport instead. */
+.uchat-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 84px;
+  z-index: 481;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 15px;
+  border: 2px solid var(--portal-accent);
+  border-radius: 22px;
+  background: var(--portal-surface, #fff);
+  color: var(--portal-accent);
+  font-family: var(--font-bn);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+}
+
+.uchat-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 482;
+  background: rgba(15, 23, 42, 0.45);
+  border: 0;
+  padding: 0;
+}
+
+.uchat-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 148px;
+  z-index: 483;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 40px));
+  height: min(560px, calc(100dvh - 220px));
+  border: 1px solid var(--portal-border, #e2e8f0);
+  border-radius: 16px;
+  background: var(--portal-surface, #fff);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+}
+
+.uchat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--portal-border, #e2e8f0);
+  background: var(--portal-accent);
+  color: #fff;
+}
+
+.uchat-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-family: var(--font-bn);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.uchat-log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uchat-bubble-user {
+  max-width: 85%;
+  white-space: pre-wrap;
+  border-radius: 14px 14px 4px 14px;
+  padding: 8px 10px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.uchat-bubble-bot {
+  max-width: 85%;
+  white-space: pre-wrap;
+  border-radius: 14px 14px 14px 4px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  padding: 8px 10px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.uchat-row-user { display: flex; justify-content: flex-end; }
+.uchat-row-bot { display: flex; justify-content: flex-start; }
+
+.uchat-welcome {
+  font-family: var(--font-bn);
+  font-size: 13px;
+  line-height: 1.7;
+  color: hsl(var(--muted-foreground));
+}
+
+.uchat-suggestion {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  background: transparent;
+  color: hsl(var(--primary));
+  font-family: var(--font-bn);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.uchat-composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 10px;
+  border-top: 1px solid var(--portal-border, #e2e8f0);
+  background: var(--portal-surface, #fff);
+}
+
+.uchat-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--portal-border, #e2e8f0);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-bn);
+  font-size: 16px; /* 16px avoids the iOS zoom-on-focus jump */
+}
+
+@media (max-width: 639px) {
+  .uchat-fab {
+    right: 12px;
+    bottom: 84px;
+  }
+
+  /* While the sheet is up the launcher would float over page content. */
+  .uchat-fab[data-open="true"] {
+    display: none;
+  }
+
+  .uchat-scrim {
+    display: block;
+  }
+
+  .uchat-panel {
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    width: 100%;
+    /* --uchat-vvh is set from window.visualViewport while the sheet is open, so
+       the on-screen keyboard cannot push the header out of view. 100dvh is the
+       fallback for browsers without visualViewport. */
+    height: var(--uchat-vvh, 100dvh);
+    max-height: var(--uchat-vvh, 100dvh);
+    transform: translateY(var(--uchat-vvoffset, 0px));
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* The on-screen keyboard shrinks the visual viewport; keep the composer
+     reachable by padding for the home indicator and safe areas. */
+  .uchat-composer {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+}

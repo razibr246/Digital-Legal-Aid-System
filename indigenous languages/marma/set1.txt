@@ -1,0 +1,67 @@
+### 1. পারিবারিক আদালত আইন, ২০২৩ এর ধারা ৫-তে উল্লিখিত বিষয়
+
+
+
+* **Legal Intent:** Disputes regarding marriage, divorce, restitution of conjugal rights, dower, and child guardianship.
+* **Target Phonetic Marma Terms:**
+* মিয়াং (Wife / Woman)
+* মাচাং (Husband / Man)
+* খ্রো / খ্যং (Divorce / Separation)
+* ছা (Child)
+
+
+* **Spelling & Pronunciation Variants:**
+* খ্রো -> খ্যং, খরং, খ্রোং
+* মিয়াং -> মিয়ং, ম্যাং
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "আমা মিয়াং-মাচাং এর মাঝে অনেকদিন ধরে পারিবারিক বিরোধ চলছে।"
+* "স্বামী খ্রো (ডিভোর্স) দিতে চায়, কিন্তু মোহরানা দিচ্ছে না।"
+* "ছা (বাচ্চা) এর কাস্টডি নিয়ে পারিবারিক আদালতে মামলা করতে চাই।"
+
+
+
+### 2. বাড়ি ভাড়া নিয়ন্ত্রণ আইন, ১৯৯১-তে উল্লিখিত বিরোধ
+
+
+
+* **Legal Intent:** Conflicts over house rent arrears, eviction without notice, and arbitrary rent increments.
+* **Target Phonetic Marma Terms:**
+* ইম / ইং (House / Home)
+* ঙা / ঙাইং (Rent / Borrowing)
+* লুই (Eviction / Taken away)
+
+
+* **Spelling & Pronunciation Variants:**
+* ইম -> ইং, ইম্ম
+* ঙা -> ঙাইং, ঙাই
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "ভাড়াটিয়া তিন মাস ধরে ইম ঙা (বাড়ি ভাড়া) দিচ্ছে না।"
+* "মালিক আমাকে জোর করে ইম থেকে লুই (উচ্ছেদ) করতে চাইছে।"
+* "বাড়ি ভাড়া নিয়ন্ত্রণ আইনে ইম ঙা বৃদ্ধির বিরুদ্ধে অভিযোগ আছে।"
+
+
+
+### 3. সিভিল জজ আদালতের এখতিয়ারভুক্ত বণ্টন সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disagreements over the partition, measurement, and boundary demarcation of inherited or shared property/land.
+* **Target Phonetic Marma Terms:**
+* ম্রে / ম্রাই (Land / Earth)
+* অং (Share / Portion)
+* চাক্ (Boundary / Border)
+
+
+* **Spelling & Pronunciation Variants:**
+* ম্রে -> ম্রাই, ম্রেয়
+* অং -> অংহ, অংশ
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "বাবার রেখে যাওয়া ম্রে (জমি) বণ্টন নিয়ে ভাইদের সাথে বিরোধ।"
+* "আমার অং (অংশ) আমাকে বুঝিয়ে দিচ্ছে না।"
+* "জমির চাক্ (সীমানা) নিয়ে সিভিল জজ আদালতে মামলা চলছে।"

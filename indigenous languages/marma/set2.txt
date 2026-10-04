@@ -1,0 +1,66 @@
+### 4. State Acquisition & Tenancy Act, 1950 এর section 96 এ উল্লিখিত অগ্রক্রয় সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes regarding the right of pre-emption (first right of refusal) for agricultural land.
+* **Target Phonetic Marma Terms:**
+* ম্রে (Land / Earth)
+* উয়াই / ওয়ে (Buy / Purchase)
+* লকহ্ / লৌ (Agricultural field)
+
+
+* **Spelling & Pronunciation Variants:**
+* উয়াই -> ওয়ে, ওয়াই
+* লকহ্ -> লোক, লৌ
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "আমার পাশের ম্রে (জমি) অন্যকে বিক্রি করেছে, আমি অগ্রক্রয় বা উয়াই (কেনার) অধিকার চাই।"
+* "কৃষি লকহ্ (জমি) এর অগ্রক্রয় নিয়ে State Acquisition & Tenancy Act এ মামলা করব।"
+* "শরিক হিসেবে ম্রে উয়াই করার অগ্রাধিকার আমার আছে।"
+
+
+
+### 5. Non-Agricultural Tenancy Act, 1949 এর section 24 এ উল্লিখিত অগ্রক্রয় সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes regarding the right of pre-emption for non-agricultural or commercial land.
+* **Target Phonetic Marma Terms:**
+* জাই / জেই (Market / Commercial space)
+* ইম-ম্রে (Homestead land / Non-agricultural land)
+
+
+* **Spelling & Pronunciation Variants:**
+* জাই -> জেই, যাই
+* ইম-ম্রে -> ইং-ম্রে, ইমম্রে
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "দোকানের জন্য জাই (বাণিজ্যিক) জমির অগ্রক্রয় অধিকার দাবি করছি।"
+* "Non-Agricultural Tenancy Act অনুযায়ী ইম-ম্রে (অকৃষি জমি) উয়াই (কেনার) মামলা করেছি।"
+* "আমার ইম-ম্রে এর পাশের জায়গা অন্য কাউকে বিক্রি করা হয়েছে।"
+
+
+
+### 6. পিতামাতার ভরণপোষণ আইন, ২০১৩ এর ধারা ৮ অনুসারে পিতা-মাতার ভরণপোষণ সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes where children refuse to provide financial support, food, and physical maintenance to their parents.
+* **Target Phonetic Marma Terms:**
+* আফা (Father)
+* আমা (Mother)
+* চা (Food / Eat)
+* উংথো (Care / Look after)
+
+
+* **Spelling & Pronunciation Variants:**
+* আফা -> আবা, ফা
+* উংথো -> উংত, উনথো
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "ছেলে তার আফা-আমা (পিতা-মাতা) এর ভরণপোষণ দিচ্ছে না।"
+* "আমাদের চা (খাবার) এবং চিকিৎসার খরচ দেয় না।"
+* "পিতামাতার ভরণপোষণ আইনে উংথো (যত্ন) না করার জন্য অভিযোগ করেছি।"

@@ -1,0 +1,130 @@
+/* =========================================================
+   Design Tokens — Shared Portal Theme System
+   =========================================================
+   Usage: Each portal layout sets a data-portal attribute on its
+   root element (data-portal="citizen" | "dlao" | "lawyer")
+   which selects the accent colour. All components use var(--portal-*)
+   tokens so they automatically adapt.
+   ========================================================= */
+
+:root {
+  /* --- Neutral palette --- */
+  --portal-white: #ffffff;
+  --portal-bg: #f8fafc;
+  --portal-bg-subtle: #f1f5f9;
+  --portal-border: #e2e8f0;
+  --portal-border-strong: #cbd5e1;
+  --portal-text: #0f172a;
+  --portal-text-secondary: #475569;
+  --portal-text-muted: #94a3b8;
+  --portal-text-on-accent: #ffffff;
+
+  /* --- Default accent (citizen green) --- */
+  --portal-accent: #15803d;
+  --portal-accent-hover: #166534;
+  --portal-accent-light: #dcfce7;
+  --portal-accent-subtle: #f0fdf4;
+  --portal-accent-border: #86efac;
+  --portal-accent-text: #14532d;
+
+  /* --- Status colours (always the same across portals) --- */
+  --status-new: #2563eb;
+  --status-new-bg: #eff6ff;
+  --status-pending: #d97706;
+  --status-pending-bg: #fffbeb;
+  --status-overdue: #dc2626;
+  --status-overdue-bg: #fef2f2;
+  --status-urgent: #be185d;
+  --status-urgent-bg: #fdf2f8;
+  --status-closed: #6b7280;
+  --status-closed-bg: #f9fafb;
+  --status-success: #059669;
+  --status-success-bg: #ecfdf5;
+
+  /* --- Spacing scale (mobile-first, generous) --- */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 0.75rem;   /* 12px */
+  --space-lg: 1rem;      /* 16px */
+  --space-xl: 1.5rem;    /* 24px */
+  --space-2xl: 2rem;     /* 32px */
+  --space-3xl: 3rem;     /* 48px */
+
+  /* --- Radii --- */
+  --radius-sm: 0.5rem;   /* 8px */
+  --radius-md: 0.75rem;  /* 12px */
+  --radius-lg: 1rem;     /* 16px */
+  --radius-xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;
+
+  /* --- Typography --- */
+  /* Noto Sans Bengali: standard govt website font for Bangladesh */
+  --font-bn: var(--font-noto-bengali), 'Noto Sans Bengali', 'Kalpurush', sans-serif;
+  --font-ui: var(--font-geist-sans), system-ui, sans-serif;
+
+  /* --- Shadow --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* --- Touch targets (minimum 44px per WCAG) --- */
+  --touch-min: 2.75rem;  /* 44px */
+  --touch-lg: 3rem;      /* 48px */
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* === CITIZEN portal accent (green — trust, government) === */
+[data-portal="citizen"] {
+  --portal-accent: #15803d;
+  --portal-accent-hover: #166534;
+  --portal-accent-light: #dcfce7;
+  --portal-accent-subtle: #f0fdf4;
+  --portal-accent-border: #86efac;
+  --portal-accent-text: #14532d;
+}
+
+/* === DLAO portal accent (navy — authority, official) === */
+[data-portal="dlao"] {
+  --portal-accent: #1e40af;
+  --portal-accent-hover: #1e3a8a;
+  --portal-accent-light: #dbeafe;
+  --portal-accent-subtle: #eff6ff;
+  --portal-accent-border: #93c5fd;
+  --portal-accent-text: #1e3a8a;
+}
+
+/* === LAWYER portal accent (burgundy — professional, legal) === */
+[data-portal="lawyer"] {
+  --portal-accent: #9a3412;
+  --portal-accent-hover: #7c2d12;
+  --portal-accent-light: #ffedd5;
+  --portal-accent-subtle: #fff7ed;
+  --portal-accent-border: #fdba74;
+  --portal-accent-text: #7c2d12;
+}
+
+/* --- Accessible focus ring (all portals) --- */
+:focus-visible {
+  outline: 3px solid var(--portal-accent);
+  outline-offset: 2px;
+}
+
+/* --- Global portal typography --- */
+[data-portal] {
+  font-family: var(--font-bn);
+  color: var(--portal-text);
+  line-height: 1.6;
+}
+
+[data-portal] h1,
+[data-portal] h2,
+[data-portal] h3,
+[data-portal] h4 {
+  font-family: var(--font-bn);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--portal-text);
+}

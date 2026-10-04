@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git pull:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(npx tsc:*)",
+      "Bash(./node_modules/.bin/tsc:*)",
+      "Bash(npm install)",
+      "Bash(npx typescript:*)",
+      "Bash(node node_modules/typescript/bin/tsc:*)",
+      "Bash(node scripts/write-build-info.mjs:*)",
+      "Bash(npx opennextjs-cloudflare build)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(wsl --install:*)",
+      "Bash(wsl --list:*)",
+      "Bash(wsl -d Ubuntu -- bash -c \"cd /mnt/c/Users/UseR/Documents/legal-voice-agent && npm install && npx opennextjs-cloudflare build\":*)",
+      "Bash(wsl -d Ubuntu -- bash -c \"\ncd ~ && \nrm -rf legal-voice-agent 2>/dev/null\ngit clone https://github.com/AdribMahmud101/legal-voice-agent.git &&\ncd legal-voice-agent &&\nnpm install &&\nnpx opennextjs-cloudflare build\n\")",
+      "Bash(wsl -d Ubuntu -- bash -c '\nexport PATH=\"\"/usr/bin:/usr/local/bin:$PATH\"\"\n# Check if node exists in Linux, if not install it\nif ! command -v node &> /dev/null; then\n  curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - 2>/dev/null\n  sudo apt-get install -y nodejs 2>/dev/null\nfi\nwhich node && node --version\n')",
+      "Bash(npx wrangler deploy)",
+      "Bash(npx wrangler d1 execute:*)",
+      "Bash(npx wrangler *)",
+      "Bash(gh auth *)"
+    ]
+  }
+}

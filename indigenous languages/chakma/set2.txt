@@ -1,0 +1,67 @@
+### 4. State Acquisition & Tenancy Act, 1950 এর section 96 এ উল্লিখিত অগ্রক্রয় সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes regarding the right of pre-emption (first right of refusal) for agricultural land.
+* **Target Phonetic Chakma Terms:**
+* ভূঁই / জুম (Land / Agricultural field)
+* ঘিনানা / ঘিনিবার (To buy / Purchase)
+* আগর (Prior / First)
+
+
+* **Spelling & Pronunciation Variants:**
+* ভূঁই -> ভুই, বুঁই
+* ঘিনানা -> গিনানা, ঘিনা
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "আমার পাশের ভূঁই (জমি) অন্যকে বিক্রি করেছে, আমি আগর ঘিনানা (অগ্রক্রয়) অধিকার চাই।"
+* "কৃষি জুম (জমি) এর অগ্রক্রয় নিয়ে State Acquisition & Tenancy Act এ মামলা করব।"
+* "শরিক হিসেবে ভূঁই ঘিনিবার (কেনার) অগ্রাধিকার আমার আছে।"
+
+
+
+### 5. Non-Agricultural Tenancy Act, 1949 এর section 24 এ উল্লিখিত অগ্রক্রয় সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes regarding the right of pre-emption for non-agricultural or commercial land.
+* **Target Phonetic Chakma Terms:**
+* ভিদে (Homestead land)
+* দোগান (Shop / Commercial space)
+
+
+* **Spelling & Pronunciation Variants:**
+* ভিদে -> ভিটে, বিদে
+* দোগান -> দগান, দোকান
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "দোগান (দোকান) এর জন্য বাণিজ্যিক জমির অগ্রক্রয় অধিকার দাবি করছি।"
+* "Non-Agricultural Tenancy Act অনুযায়ী ভিদে (বসতভিটা) ঘিনানা (কেনার) মামলা করেছি।"
+* "আমার ভিদে এর পাশের জায়গা অন্য কাউকে বিক্রি করা হয়েছে।"
+
+
+
+### 6. পিতামাতার ভরণপোষণ আইন, ২০১৩ এর ধারা ৮ অনুসারে পিতা-মাতার ভরণপোষণ সম্পর্কিত বিরোধ
+
+
+
+* **Legal Intent:** Disputes where children refuse to provide financial support, food, and physical maintenance to their parents.
+* **Target Phonetic Chakma Terms:**
+* বাজী / বাবা (Father)
+* মা / আম্মা (Mother)
+* খেইবার দানা (To feed / Provide food)
+* পালানা / চানা (To care / Look after)
+
+
+* **Spelling & Pronunciation Variants:**
+* বাজী -> বাজি, বাচি
+* খেইবার -> খাইবার, খেইবার
+* পালানা -> পালনা, ফালানা
+
+
+* **ASR Training/Bias Sentences (Code-mixed):**
+* "ছেলে তার বাজী-মা (পিতা-মাতা) এর ভরণপোষণ দিচ্ছে না।"
+* "আমাদের খেইবার দানা (খাবার) এবং চিকিৎসার খরচ দেয় না।"
+* "পিতামাতার ভরণপোষণ আইনে পালানা (যত্ন) না করার জন্য অভিযোগ করেছি।"

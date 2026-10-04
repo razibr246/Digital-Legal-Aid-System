@@ -1,0 +1,4 @@
+1. Check general to urgent switch based on classification functional or not
+2. Check if Blind/diable people ivr system is functional or not ( Credential Retrieval  )
+
+We can be

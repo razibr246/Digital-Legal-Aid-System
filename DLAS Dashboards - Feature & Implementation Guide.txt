@@ -1,0 +1,406 @@
+# DLAS — Chief DLAO, DLAO & Citizen Dashboards
+### Feature & Implementation Reference
+
+> Source: reverse-engineered from `DLAS Prototype - OPEN THIS FILE (2).html` (a bundled multi-screen React/"Claude artifact" prototype for Bangladesh's **Digital Legal Aid System**, built for the Directorate of Bangladesh Legal Aid — DBLA, Ministry of Law, Justice and Parliamentary Affairs, with UNDP Bangladesh support).
+>
+> This document is written so it can be handed to a dev team rebuilding these three dashboards **in a fresh codebase** (any stack — React/Next.js, Vue, etc.). It covers: the shared data model, the roles/permissions map, and a full feature-by-feature breakdown of the **Chief DLAO Dashboard**, the **DLAO (Legal Aid Officer) Dashboard**, and the **Citizen Dashboard**, plus the cross-cutting design system (bilingual UI, theming, accessibility toolbar) all three share.
+
+---
+
+## 1. System overview
+
+DLAS is a **role-based, bilingual (Bangla / English) legal-aid case management system**. One shared client-side store (`window.DLAS`, backed by `localStorage`) is the single source of truth for cases, applications, events, payments, mediations, transfers, etc. Every screen (dashboard) subscribes to this store and re-renders on change — so an action taken on one screen (e.g. an officer accepting an application) is immediately visible on another (e.g. the citizen's dashboard, or the Chief's supervision view).
+
+The prototype ships **20 screens** total; this guide documents the three the user asked about in depth, and lists the rest in the [Appendix](#appendix-other-screens-in-the-system) for context, since they interconnect (a Chief's "Certify agreement" button opens Case Detail; a DLAO's "walk-in" button opens Citizen Intake; etc.).
+
+### 1.1 Roles in the system
+
+| Role key | Title (EN) | Title (BN) | Scope |
+|---|---|---|---|
+| `dlao` | Legal Aid Officer | লিগ্যাল এইড অফিসার | One district office — day-to-day case work |
+| `chief` | Chief Legal Aid Officer | চীফ লিগ্যাল এইড অফিসার | One district — certifies settlements, approves payments, supervises DLAOs, maintains panel lawyer master list |
+| `chairman` | District Committee Chairman | জেলা কমিটির চেয়ারম্যান | One district committee — approves panel list changes proposed by Chief, settles misconduct cases (shares the Chief's screen as a "variant") |
+| `chowki` | Legal Aid Officer — Chowki Adalat | লিগ্যাল এইড অফিসার — চৌকি আদালত | Circuit-court office |
+| `sclao` | Supreme Court Legal Aid Officer | সুপ্রীম কোর্ট লিগ্যাল এইড অফিসার | Appellate Division cases |
+| `labour` | Labour Legal Aid Cell Officer | শ্রম লিগ্যাল এইড সেল কর্মকর্তা | Labour tribunal cases |
+| `panel` | Panel Lawyer | প্যানেল আইনজীবী | Assigned cases only |
+| `mediator` | Special Mediator | বিশেষ মধ্যস্থতাকারী | District-registered mediation requests |
+| `judge` | Judicial Magistrate | বিচার বিভাগীয় ম্যাজিস্ট্রেট | Court-side view |
+| `callcentre` | Call-Centre Operator | কল-সেন্টার অপারেটর | National helpline 16699 |
+| `ngo` | NGO/CSO Accredited Partner | এনজিও/সিএসও অ্যাক্রেডিটেড পার্টনার | Referral source |
+| `udc` | UDC Entrepreneur | ইউডিসি উদ্যোক্তা | Union Digital Centre — assisted filing |
+| `referral` | Referral Committee Representative | রেফারেল কমিটি প্রতিনিধি | Upazila committee (UzLAC) |
+| `admin` | DBLA National Administrator | DBLA জাতীয় প্রশাসক | National — configures mandatory-mediation district list, sees national dashboard |
+| *(citizen)* | Applicant | আবেদনকারী | Own applications/cases only |
+
+**Screen-guard pattern:** every officer-facing dashboard checks the signed-in role against the screen it renders (`if (sess === "dlao" || !sess) { … } else { show "This console is for the Legal Aid Officer" deny screen with a "Go to my own screen" link }`). Build this as a route guard / HOC in the new project rather than baking role checks into every component.
+
+**District identity:** the signed-in district is stored as a variant string in `localStorage["dlas.svar.v1"]`, format `"dlo:<districtKey>"` (e.g. `dlo:d25` = Joypurhat). A `districtIdentity(sess, isBn)` lookup resolves this to the office name, district name, and the correct persona (name) for `dlao` / `chief` / `panel` / `mediator` / `chairman` roles in that district. Roles outside the district-office family (appellate cell, labour cell, chowki, NGO, UDC, call-centre) have their own fixed rosters and must **not** inherit a district persona — carry this rule forward as-is.
+
+### 1.2 Design system (shared across all dashboards)
+
+- **Bilingual UI**: every string is stored as a `{ bn, en }` pair inside a `STR = { en: {...}, bn: {...} }` dictionary per screen; a header toggle (`বাংলা` / `English`) switches `state.lang` and re-renders. Bangla numerals are rendered via a `bnDigits()` helper that maps `0–9` → `০-৯` when `lang === "bn"`.
+- **Government chrome**: a thin black "গণপ্রজাতন্ত্রী বাংলাদেশ সরকার / Government of the People's Republic of Bangladesh" bar, then a green (`#00543E`) header with an emblem placeholder, "DLAS" wordmark, signed-in user name + role, language toggle, and Log out.
+- **Theme tokens**: a `LIGHT` / `DARK` palette (CSS custom properties: `--d-bg`, `--d-ink`, `--d-primary`, `--d-border`, `--d-warn-*`, `--d-ok-*`, `--d-err-*`, `--d-focus`, etc.) so high-contrast mode is a full palette swap, not per-element overrides.
+- **Accessibility toolbar** (floating bottom-right button, persisted to `localStorage["dlas.a11y.v1"]`, identical on every screen):
+  - High contrast toggle (swaps to the `DARK` palette, which here means true black/white/yellow, not just "dark mode")
+  - Text size stepper across a fixed scale `[1, 1.15, 1.3, 1.5, 1.75, 2]`
+  - Line height toggle (normal / loose)
+  - Big cursor toggle (custom yellow SVG cursor)
+  - "Highlight links" toggle
+  - Reset all
+- **SLA colour coding**: "days in current stage" turns amber at 14 days, red at 30 (mediation instead ages against its own 60-day legal timeline, extendable by 30).
+- **Sensitive-case gating**: rows flagged `sensitive: true` (e.g. gender-based violence cases) hide the applicant's name behind a lock icon + "Sensitive case — confirm to view details"; opening one raises a confirmation dialog that states the access will be logged (name, time, case number) and that the applicant can request that access log. **Build this as a first-class access-control feature, not a UI nicety** — it's audit-logged.
+- **Toast notifications**: a fixed bottom-center toast (green check icon, dark background) confirms every state-changing action for ~3.2s.
+- **Empty/placeholder states, `resultCount` ("Showing {n} of {total}") and `noResults` copy** are defined for every list/table.
+
+---
+
+## 2. Shared data model (the `window.DLAS` store)
+
+All three dashboards (and the other 17 screens) read/write through one in-memory + `localStorage`-persisted store (key `dlas.store.v3`). Recreate this as your backend/API layer (REST, GraphQL, or a state manager if you keep it client-only for a prototype).
+
+### 2.1 Core entities
+
+| Entity | Shape (key fields) | Notes |
+|---|---|---|
+| **Application** (`apps[]`) | `appId, nameBn/En, age, typeBn/En, channelBn/En, whenBn/En, incomeBn/En, catBn/En, priority, emergency, districtBn/En, code, officeBn/En, status, caseId, nidMissing, restricted, agentFiled` | Pre-case. Does **not** count toward any case list/calendar until accepted. |
+| **Case** (`cases{id}`) | `status, statusBn/En, days, changedAt, nameBn/En, typeBn/En, officeBn/En, priority, emergency, srcBn/En, lawyerId, mediationDate, sensitive` | `id` format: `DLAS-<DISTRICT_CODE>-<year>-<serial>`, e.g. `DLAS-NET-2026-04417`. |
+| **Case status enum** | `submitted → review → mediation → lawyer → court → settled \| unresolved` | See lifecycle diagram §2.3. |
+| **Representative** (`reps[]`) | `repId, forApp, nameBn/En, age, relationBn/En, channelBn/En, authBn/En, authConfirmed, accessBn/En (what the rep physically can/cannot do), readerBn/En (screen-reader behaviour), wantsAccount` | "Someone speaking for the applicant" — e.g. a blind representative who can only use voice. |
+| **Fact provenance** (`facts{ref}`) | Per fact: `key, kBn/En (label), vBn/En (value), c (confirmed bool), byBn/En` | Tracks *who* supplied each fact and whether the applicant has confirmed it themself. Nothing is discarded; unconfirmed facts stay usable but flagged. |
+| **Safe-contact profile** (`SAFE_PROFILES`) | `ref, riskBn/En, neutralOnly, windowBn/En (safe calling time), dests[{ rule: allow\|window\|block, kindBn/En, toBn/En, ownerBn/En, whyBn/En }]` | Per-channel (SMS/voice/portal/rep) send permission with a stated reason — prevents notifying an abuser's phone. |
+| **Payment request** (`payments[]`) | `id (PR-####), caseId, type, amount, note, requesterRole, status (pending/approved/rejected), reason, at, decidedAt` | Only the Chief/Chairman can approve; approving starts disbursement. |
+| **Mediation record** (`mediations{caseId}[]`) | `date, byOfficer, mediator, outcome (scheduled/settled/failed)` | Repeatable — a case can have multiple mediation attempts. |
+| **Mediator request** (`medReqs[]`) | `id (MR-####), caseId, mediatorId, status (pending/accepted/declined), whenBn/En, byBn/En` | A mediator must **accept** before honorarium can be requested. |
+| **Settlement** (`settlements{caseId}`) | `signedA, signedB, certified, decree, refund` | All 3 parties must e-sign before Chief can certify; court issues decree within 7 days of certification. |
+| **Lawyer-app / mediator-app** (`lawyerApps[]`) | `id (PLR-#### / SMR-####), status, bn/En name, bar, enrolBn/En, jur, distBn/En, specs[], phone, email, g, kind: 'lawyer'\|'mediator'` | Self-registration from the public portal, approved by the **DLAO of that jurisdiction** — never the Chief. |
+| **Jurisdiction transfer** (`transfers[]`) | `id (TR-####), ref, fromOffice, toOffice, whyBn/En, status (pending/accepted/returned), reason` | One office claims a record belongs to another; keeps the same case ID on transfer. |
+| **Lawyer-change / new-lawyer request** (`lawyerReqs[]`) | `id (LR-####), caseId, kind: 'new'\|'change', status` | Citizen-initiated; Chief approves; approving a *change* flags any already-paid tranche for un-completed steps as **clawback/refund owed**. |
+| **Tranche** (`tranches{caseId}[]`) | `step, amount, status (pending/paid/refund)` | Step-wise lawyer payment; `flagClawback(caseId, fromStep)` marks paid-but-incomplete steps refundable. |
+| **SLA log** (`slaLog[]`) | `id, ref, stage (review/mediation/payment), level (near/breach), ageDays, limitDays, role, at` | Computed **once per load** and written as permanent notifications (not recalculated per render) — badges just count log rows. SLA table: review = 15d (warn 3d, role `dlao`); mediation = 60d +30d extension (warn 10d, role `dlao`); payment approval = 10d (warn 2d, role `chief`). |
+| **AI queue-assist decision** (`assist{appId}`) | `level (high/normal), suggested, overruled (bool), reason, byBn/En, at` | The assist only **ranks** the queue (never rejects, never decides eligibility); the officer's accept/override + reason is logged either way. |
+| **Misconduct case** (`MISCONDUCT[]`, static seed) | `id (GRV-####), lawyerId, sBn/En (summary), verdict: 'guilty'\|'open'` | On "guilty", **both** "Refer to Bar Council" and "Remove from panel" actions are required by policy. |
+| **Audit trail** (`audit[]`) | `id (AUD-####), kindBn/En, refId, bn/En, at` | Used for identity-verification records, etc. |
+| **Counters** | `statusChanges, mediationsScheduled, resolved, accepted, rejected` | Rolled up for KPI tiles. |
+| **Mandatory-mediation district list** (`mandDistricts[]`) | list of district codes | **Configuration, not code** — editable by the National Administrator; every screen reads from this one list. Seeded with 20 of the 64 districts. |
+
+### 2.2 Store API surface (recreate as your service layer)
+
+```
+subscribe(fn) → unsubscribe                     // pub/sub for re-render
+getCase(id) / patchCase(id, patch)
+setStatus(id, statusId, {bn,en}, meta)           // THE canonical status-change mutation; also bumps counters + writes an event
+addEvent(ev) / eventsFor(id)
+addNotice(n) / noticesFor(id)
+
+removeLawyer(lawyerId, reason) / lawyer(lawyerId)
+
+settlement(caseId) / patchSettlement(caseId, patch)
+
+payments() / requestPayment(req) / decidePayment(id, status, reason)
+
+mediators(districtCode) / mediatorById(id)
+medRequests(mediatorId) / medRequestFor(caseId)
+requestMediator(rec) / decideMedRequest(id, status, reason)
+mediatorAccepted(caseId) / mediatorPayAllowed(caseId)
+
+slaStages() / slaLog() / slaScan() / slaAlerts(role)  // {near, breach, total, items}
+
+callLogs() / logCall(rec)
+referrals() / addReferral(rec)
+callbacks() / addCallback(rec) / closeCallback(id)
+
+lawyerApps(jurisdiction) / addLawyerApp(rec) / decideLawyerApp(id, approve, note) / approvedLawyerApps(jur)
+
+audit() / addAudit(rec)
+applicantProfile()                                // pre-fill for a returning applicant's intake
+
+districts() / district(svar) / districtByCode(code)
+mandatoryDistrictOptions() / mandatoryDistricts() / isMandatoryDistrict(code) / isMandatoryCase(caseId)
+addMandatoryDistrict(code) / removeMandatoryDistrict(code)
+
+reps() / repFor(appId) / confirmRep(repId, actor)
+
+transfers() / seedTransfer(rec) / requestTransfer(rec) / decideTransfer(id, status, reason)
+
+lawyerReqs() / requestLawyer(rec) / lawyerReqFor(caseId, kind) / decideLawyerReq(id, status)
+
+reverified(caseId) / setReverified(caseId, actor)     // financial re-verification flag
+
+mediations(caseId) / addMediation(caseId, rec) / setMediationOutcome(caseId, idx, outcome)
+
+tranches(caseId) / seedTranches(caseId, rows) / patchTranche(caseId, idx, patch) / flagClawback(caseId, fromStep)
+
+factsFor(ref) / confirmFact(ref, key, actor)          // provenance-of-fact tracking
+
+assist(app) → {level, why[]}                          // AI queue-priority suggestion (read-only heuristic)
+assistDecision(appId) / decideAssist(appId, level, suggested, reason, actor)
+
+safeProfiles() / safeProfile(ref)
+outbox() / logMessage(rec)                            // every send attempt logged, including blocked/delayed ones
+
+apps() / submitApp(rec) / seedApp(rec) / findApp(appId)
+verifyIdentity(appId, method)                         // manual ID verification when no NID was given
+acceptApp(appId, actor)                                // ← the ONLY place an application becomes a case (mints case ID)
+rejectApp(appId, reason, actor)                        // terminal — no appeal path
+
+allCases() / mintedCases()
+
+caseActionState(facts) → { advise, mediation, assignLawyer, referOut, requestPay, transfer }
+                                                        // ***single source of truth for which case actions are legal
+                                                        // right now***, each {ok, reason}. See §2.4.
+
+reset()                                                // wipes to seed data (demo/testing only)
+```
+
+**Design takeaway for the new project:** almost every "business rule" (SLA thresholds, what counts as a mandatory-mediation district, whether a lawyer can be assigned yet, when a payment is billable) lives in **one function** (`caseActionState`) or **one config table** (`SLA_STAGES`, `mandDistricts`), not scattered across screens. Preserve that centralization — it's the most valuable architectural property to carry over.
+
+### 2.3 Case status lifecycle
+
+```
+submitted → review → mediation ──(failed + lawyer requested)──▶ lawyer → court → settled
+                 │                                                              └▶ unresolved
+                 └───────────────(no mediation needed / mandatory-mediation skip rules)───────────────▶ lawyer
+```
+
+- `settled` / `unresolved` are terminal ("closed") — no further case actions are legal once closed (`caseActionState` returns `ok:false, reason:"closed"` for everything).
+- **Mandatory-mediation districts**: if the case's district is on the mandatory list and no mediation record exists yet, `assignLawyer` is blocked (`reason:"mandatory"`) — mediation must be attempted first.
+- A lawyer can only be assigned after mediation has **failed** *and* the applicant has escalated (`lawyerRequested` or an open "new lawyer" request) — reason keys `needFailedMed` / `adviceLate` / `medLate` / `lawyerAlready` guard the other transitions.
+- Appellate (`sclao`) and Labour (`labour`) tracks skip mediation entirely; their lawyer gate instead requires an eligibility check to have passed (`needEligibility`) rather than a failed mediation.
+- A **payment request** is only allowed once something billable has happened (`medConcluded || lawyerAssigned`), one isn't already pending, and — for a mediator specifically — only after that mediator has *accepted* the case (Special Mediators are not paid for merely being asked).
+- A **transfer** is only allowed before any work has started (no mediation, no lawyer) and while no other transfer is already pending.
+
+---
+
+## 3. DLAO Dashboard ("Legal Aid Officer" console)
+
+This is the day-to-day caseworker screen for the officer running one district (or Chowki/Appellate/Labour cell — same template, different seed data via the `WHO` table). File: `DLAS Officer Dashboard.dc.html`.
+
+### 3.1 Navigation (tabs)
+
+| Tab key | Label (EN / BN) | Purpose |
+|---|---|---|
+| `dashboard` | Dashboard / ড্যাশবোর্ড | KPI tiles, today's priorities, SLA alert banner, case table |
+| `apps` | New applications / নতুন আবেদন | Accept/reject queue, with AI-assist ranking |
+| `cases` | Cases / কেস | Full case list with filters |
+| `panelreg` | Panel registrations / প্যানেল নিবন্ধন | Approve/reject advocate & mediator self-registrations for this jurisdiction |
+| `hearings` | Hearings / শুনানি | Summary card → deep-links to the shared **Calendar** screen |
+| `lawyers` | Panel lawyers / প্যানেল আইনজীবী | Summary card → deep-links to the shared **Lawyer Assignment** engine |
+| `reports` | Reports / প্রতিবেদন | Placeholder ("not built yet in this prototype"; district reporting belongs here, national reporting is on the National Dashboard for admins) |
+
+### 3.2 Dashboard tab
+
+- **SLA alert banner** at the top: "⚠ N case(s) are close to their SLA limit" / "⚠ B breached, N near" — sourced from `slaAlerts('dlao')`, i.e. real logged notifications, not a number recomputed on screen.
+- **KPI tiles** (4): Active Cases, Today's Hearings, Action Required, Resolved This Month — each with an icon, a trend line ("8 more than last week"), and a tone (`primary` / `warn` / `ok`).
+- **Today's priorities** list: short action items with icon + meta (e.g. "Documents missing in 2 cases — For 4 days", "1 mediation session at 3:00pm — Room 2, Sadar", "1 panel lawyer assignment awaiting your approval"). Each item is clickable and deep-links into the relevant tab/filter (e.g. clicking a "new referral" priority jumps to Cases tab pre-filtered to `onlyNew`).
+- **View toggle**: List view / Calendar view for the case table.
+- Falls through to the shared **Case list** (see §3.4) below the priorities.
+
+### 3.3 New Applications tab
+
+- Intro copy makes explicit: *applications are not cases yet* — they don't appear in the case list, calendar, or any count until accepted.
+- Scoped to the officer's own district only ("Only applications filed in {district} appear here").
+- Each application card shows: applicant name (or hidden if sensitive/restricted), case type, channel (Web / UDC / Call centre 16699 / IVR / agent-filed / self), when filed, declared income, applicant category (e.g. "Insolvent widow / abandoned woman", flagged if it **may exceed the income ceiling**), priority/emergency badges.
+- **"View full application"** expands a read-only full detail (purpose, issue in the applicant's own words, gender, age, NID, phone, occupation, education, address, dependents, father/spouse, opposite party, referral source) — explicitly **not editable** at review stage.
+- **Fact provenance panel** ("N facts nobody has confirmed with the applicant" / "Every fact came from the applicant herself"): for each fact shows who supplied it, what authority they had, and a "Mark as confirmed" action. Unconfirmed facts are kept and usable, never discarded, never silently promoted to "established."
+- **No-NID handling**: if filed without a National ID (e.g. via IVR through a representative), shows "Filed without an NID — manual verification required" with a **"Verify through the village police"** action that records the verification method to the audit trail (`verifyIdentity`) rather than blocking the application.
+- **AI Queue Assist** panel per application:
+  - Suggests `review first` or `normal order` with a bulleted "what this is based on" list (emergency flag, category matching a vulnerability pattern, days waiting, count of unconfirmed facts).
+  - Explicit disclaimer: *it only ranks the queue; it never decides eligibility and can never reject an application — the officer decides.*
+  - Officer can **"Accept the suggestion"** or **"Decide differently"** (opens a required free-text reason field, e.g. "The applicant reached us through her brother and is safe for now; the Taltoli case is closer to a hearing."), and **"Record my decision"** persists it (`decideAssist`) with an audit-style event either way.
+- **Accept & issue case ID**: mints the case (see `acceptApp`) and shows a toast "Accepted — case {id} created."
+- **Reject**: requires a reason (placeholder: "e.g. Declared income is above the eligibility ceiling and no priority category applies."), a hard confirmation step stating *this is final — there is no appeal* (`rejectApp`), toast "Application rejected — the applicant will be notified."
+
+### 3.4 Case list (Cases tab / Dashboard table)
+
+- **Filters**: District (locked to own office), Case type, Status, Submitted-date range, free-text search (Case ID or applicant name — search is disabled against the name of a sensitive case, only the ID matches).
+- **"Show only new referrals" toggle** — flags cases newly routed in from UDC/999/109/etc. in the last 48h with a highlighted dot badge.
+- **Columns**: Case ID, Applicant (or lock icon + "Sensitive case — confirm to view" ), Case type, Source (Direct / UDC / ULAC / UzLAC / NGO / Call Centre / Refer-from-999 / Refer-from-109 / Expatriate), Status (with icon + colour by tone), Submitted date, Days in stage (colour-coded, amber@14/red@30; mediation uses the 60/90-day rule instead), Action → "View detail →" (opens **Case Detail** screen).
+- **Sensitive-row confirm dialog**: opening a GBV-flagged row requires confirming a modal that states the access is logged (officer name, time, case number) and that the applicant may request that log.
+- Table footnote explains the days/SLA counting rule inline.
+- **"Register new application (walk-in applicant)"** button in the sub-header → opens the **Citizen Intake** wizard pre-set for staff-assisted filing.
+
+### 3.5 Panel Registrations tab
+
+- Queue of advocates (and Special Mediators) who self-registered via the public portal **for this officer's jurisdiction specifically** — explicitly *not* the Chief's queue.
+- Card shows: enrolment number, bar registration + year, jurisdiction, specialisations, contact, and (for mediator kind) certificate number.
+- Actions: **Approve and add to panel** (adds to the panel directory, makes assignable) / **Reject** — both are name-attributed and logged; approve/reject toasts confirm.
+
+### 3.6 Hearings & Lawyers tabs
+
+Both are lightweight "hub" cards in this screen (title + description + a single CTA) that hand off to two shared, more detailed screens:
+- **Hearings & mediation** → "Open the cause-list calendar" (the **Calendar** screen: week view Sunday–Thursday, sensitive cases shown without a name).
+- **Panel lawyers** → "Open the assignment engine" (the **Lawyer Assignment** screen: ranked suggestions matched to a case's criteria + full searchable directory).
+
+### 3.7 Reports tab
+
+Explicitly a placeholder in the prototype ("Not built yet… the national dashboard covers the DBLA-wide view for administrators"); a "Notify me when this is built" CTA. **Implementation note:** this is where district-level analytics (disposal times, case mix, panel lawyer performance) belongs — build it as its own module, separate from the National Dashboard (which is DBLA-wide/admin-only).
+
+---
+
+## 4. Chief DLAO Dashboard ("Chief Legal Aid Officer" console)
+
+File: `DLAS Chief Officer.dc.html`. One template drives **two role variants** via a `variant` prop: `chief` (Chief Legal Aid Officer, Joint District Judge rank) and `chairman` (District Committee Chairman, a retired/sitting District & Sessions Judge who chairs the district legal aid committee). The two differ only in copy/permissions on the **Panel list** and **Misconduct** tabs (Chief *proposes*, Chairman *approves*); everything else is identical.
+
+Framing line shown on Overview: *"You certify settlement agreements, maintain the panel lawyer master list, and supervise the office. Day-to-day case work sits with the Legal Aid Officer."* — i.e. this dashboard is deliberately **supervisory/approval-only**, never a case-editing surface.
+
+### 4.1 Navigation (tabs)
+
+| Tab | Label |
+|---|---|
+| `tabHome` | Overview / সারসংক্ষেপ |
+| `tabCertify` | Certifications / প্রত্যায়ন |
+| `tabPayments` | Payment approvals / পেমেন্ট অনুমোদন |
+| `tabPanel` | Panel list / প্যানেল তালিকা |
+| `tabReports` | Referral & mediator reports / রেফারেল ও মধ্যস্থতাকারী প্রতিবেদন |
+| `tabMisconduct` | Misconduct / অসদাচরণ |
+| `tabTransfers` | Jurisdiction transfers / এখতিয়ার হস্তান্তর |
+| `tabLawyerChg` | Lawyer changes / আইনজীবী পরিবর্তন |
+
+### 4.2 Overview tab
+
+- **SLA banner**: payment-approval SLA (10 days, warn at 2) — "⚠ N payment request(s) are close to the approval SLA."
+- **4 KPI tiles**: Pending certifications (+ oldest-waiting age), Panel list changes to action (+ count of proposed additions), Cases handled this month across officers, Open misconduct investigations (+ count proven).
+- **Officer activity / supervision table**: Officer name+role, Cases handled, Turnaround (avg days), Overdue count — explicitly **read-only**: *"This summary is for supervision only. No case data can be changed from here."*
+
+### 4.3 Certifications tab
+
+- Lists mediated settlement **agreements awaiting certification**: parties, one-line summary of the dispute + mediation date, and signature status.
+- Rule: **all three parties must e-sign** before the Chief can certify. If unsigned, the "Certify" action is blocked with an explanatory note ("Open the agreement to see who is outstanding") and a blocking toast if attempted anyway.
+- **"Certify"** action → toast "{v} certified — the decree follows within 7 days" (the court then issues the decree; this dashboard doesn't touch the decree itself, only the certification gate).
+- **"Open agreement"** deep-links into the full agreement (Case Detail-style view, outside this file).
+
+### 4.4 Payment approvals tab
+
+- Queue of payment requests from panel lawyers, mediators, and legal aid officers. *"Only you can release a payment. Approving triggers disbursement to the requester's registered account."*
+- Actions: **Approve** / **Reject** (reject requires a reason, e.g. "The closure report is not yet on file for this case," with a confirm step). Toasts confirm either outcome; a reject is visible to the requester with the stated reason.
+- Backed by `payments()/decidePayment()`; requests only exist because `caseActionState().requestPay` gated them upstream (billable milestone reached, not already pending, mediator-accepted-if-mediator).
+
+### 4.5 Panel list tab (Panel lawyer master list)
+
+- Table: Lawyer, Specialisation, List status (`On the panel` / `Proposed` / `Removed`), Action.
+- **As Chief**: propose an addition or **propose removal** of a lawyer from the master list — goes to the Chairman for approval. Explicit note: *"This is the master list — assigning a lawyer to a specific case happens in the case's own assignment engine, not here."*
+- **As Chairman**: approve the Chief's proposed changes; once approved, it's live in the lawyer directory across every office immediately.
+
+### 4.6 Referral & mediator reports tab
+
+District-level reporting surface for referral-source volume (UDC/NGO/999/109/etc.) and Special Mediator performance/acceptance rates. (Reuses the same reporting patterns as the DLAO's Reports tab and the National Dashboard, scoped to this district/committee.)
+
+### 4.7 Misconduct tab
+
+- Lists **grievances against panel lawyers escalated to the committee**: lawyer name, a plain-language summary of the complaint and what the investigation found, and a verdict state — `Found proven` or `Under investigation`.
+- **On a proven verdict, both of the following are policy-required (not optional/either-or)**:
+  1. **Refer to Bangladesh Bar Council**
+  2. **Remove from panel list** (takes effect in the lawyer directory immediately)
+- Copy is explicit that both actions are required by the rules, and each button flips to a "done" state (`Referred to the Bar Council` / `Removed by committee`) once actioned.
+
+### 4.8 Jurisdiction transfers tab
+
+- Requests from **another office** claiming one of its records actually belongs in this office's jurisdiction (e.g. disputed land is in this district, or the applicant's permanent address is here).
+- Shows: which office sent it, their stated reason.
+- Actions: **Accept transfer** (moves it into this office's queue, keeping the same record ID) or **Return to sender** (requires a stated reason, e.g. "The disputed property is in Mymensingh, not Netrokona").
+
+### 4.9 Lawyer-change requests tab
+
+- Applicants whose case is **before the court** can ask for a different panel lawyer; only the Chief can approve a replacement.
+- Shows the applicant's stated reason.
+- **"Assign a new lawyer"** action — and critically: *approving flags any tranche already paid to the outgoing lawyer, for steps they did not complete, as a refund owed* (clawback — see `flagClawback`/refund tab pattern in §2.1).
+- A companion **"Refunds owed by replaced lawyers"** panel/section tracks these clawbacks until the money is confirmed back with the office (**"Confirm refund received"** action).
+
+---
+
+## 5. Citizen Dashboard (Applicant-facing console)
+
+File: `DLAS Citizen Dashboard.dc.html`. Two screens in one component, switched by a `screen` prop: `home` (list) and `case` (detail). This is the **only one of the three** dashboards aimed at the public rather than staff — plain language, no jargon, everything explained in terms of "what happens next."
+
+### 5.1 Home screen
+
+- **Welcome banner**: "Welcome back, {name}" + a one-line status nudge if any application needs attention (e.g. "One of them needs documents from you before the mediation on 10 September").
+- **Quick actions**: "Start a new application" and "Make a complaint" (→ Grievance screen).
+- **My applications** table: Case type, Submitted date, Status badge, → "View details."
+- Bottom nav: Dashboard / Applications / Cases / Submit a Grievance, plus a persistent Helpline number (16699) and footer links (Accessibility, Privacy Policy, Terms of Use, FAQ).
+- Same accessibility toolbar and bn/en toggle as the officer screens.
+
+### 5.2 Case detail screen
+
+For each application/case, four structured panels:
+
+1. **Progress** — a step timeline (Application submitted → Application reviewed → Lawyer assigned → Mediation scheduled/Hearing/etc. → Case resolved), each step showing a date and a `done`/`current` state, written entirely in plain outcome language (no internal status codes shown to the citizen).
+2. **Documents** — checklist of required documents with `Received` / `Missing` state and a summary ("3 of 5 received"). Any **missing** document shows an **"Upload"** action (explicitly supports photographing a paper document with a phone) and a hint of where to obtain it if it's third-party (e.g. "Get this from your Union Parishad and upload it"). Uploading a doc triggers a toast + timestamps it "Uploaded just now" and is immediately visible to the officer.
+3. **Your legal aid office** — handling office name, helpline (with an international-dialling variant), and office hours.
+4. **"Not satisfied with how your case is going?"** — a context-sensitive escalation panel:
+   - If mediation has concluded → **"I'm not satisfied with the mediation outcome — apply for a lawyer"** (creates a `lawyerReqs` "new" request, reviewed by an officer; explicitly does not undo any existing decision).
+   - If the case is before the court → **"Request a lawyer change"** (creates a `lawyerReqs` "change" request, reviewed by the **Chief Legal Aid Officer** specifically; current lawyer continues until decided).
+   - Both require a short free-text reason and show a confirmation screen + toast on send.
+5. **Message your officer** — a short free-text message box, explicitly *not* for emergencies ("call 999 instead"); footer note sets the expectation that replies come by SMS within ~2 working days.
+6. **Ask DBLA Assistant** — an AI-help entry point (stubbed in the prototype: "The assistant opens here in the full prototype").
+
+### 5.3 Status labels shown to the citizen
+
+Reuses the same 7-state enum as the officer dashboards, but relabels/simplifies for a lay audience: Submitted, Under review, Lawyer assigned, Mediation scheduled, In court, Closed – settled, Closed – unresolved. A `liveNote` ("Updated by your legal aid office just now") appears when the store pushes a live update while the citizen has the page open — demonstrating the shared-store real-time sync in the officer-facing UI reaching the citizen UI too.
+
+---
+
+## 6. Cross-dashboard interaction map
+
+```
+Public Portal ──(login/register)──▶ Citizen Dashboard ──(new application)──▶ Citizen Intake wizard
+                                          │                                         │
+                                          │ (view case) ▼                          ▼ submitApp()
+                                          └────────▶ Case Detail  ◀── acceptApp() ── DLAO: New Applications tab
+                                                         ▲                               │
+                              DLAO: Cases tab ───────────┘                               │ (walk-in) 
+                              DLAO: Hearings tab ──▶ Calendar                            ▼
+                              DLAO: Lawyers tab ──▶ Lawyer Assignment              Citizen Intake (staff-assisted)
+                              DLAO: Panel Registrations ──(approve)──▶ Panel directory
+                                          │
+                                          │ payment/lawyer-change/transfer/misconduct requests
+                                          ▼
+                              Chief DLAO Dashboard (approve/certify/supervise)
+                                          │
+                                          ▼
+                              National Dashboard (DBLA admin, all districts)
+```
+
+---
+
+## 7. Implementation checklist for a fresh project
+
+1. **Model the store first.** Port §2.1/§2.2 as your database schema + service/API layer before building any screen — every dashboard is a thin view over it.
+2. **Centralize business rules.** Reimplement `caseActionState()` and `SLA_STAGES` as pure, testable functions — every "is this action allowed right now" check in every dashboard should call the same function, not re-derive the rule.
+3. **Bilingual by construction.** Store all UI copy as `{ key: { bn, en } }`, not hardcoded strings, from the start — retrofitting i18n later is the expensive path.
+4. **Role guard + district scoping as middleware/route-level concerns**, not per-component `if` checks.
+5. **Audit everything that gates access or money**: sensitive-case opens, ID verification methods, AI-assist overrides, misconduct actions, payment decisions, message sends (including blocked/delayed safe-contact attempts) — all need an immutable log entry, not just a state flag.
+6. **Accessibility toolbar and theme tokens** are cheap to build once and reuse everywhere — build them as a shared layout shell (header + toolbar + toast) that every dashboard wraps.
+7. **Treat "application" and "case" as distinct entities** with one explicit graduation step (`acceptApp`) — don't let a not-yet-accepted application leak into case counts, calendars, or lists.
+8. **Terminal actions need a hard confirm + reason field**: rejecting an application, returning a transfer, rejecting a payment — all are one-way doors in this system and the UI treats them accordingly.
+
+---
+
+## Appendix: other screens in the system
+
+For context when implementing "everything" — these are the other 17 screens in the same prototype, sharing the store and design system above:
+
+| Screen | Purpose |
+|---|---|
+| DLAS Style Guide | Design tokens / component reference |
+| DLAS Public Portal | Citizen-facing landing page + login/registration entry point |
+| DLAS Citizen Intake | Multi-step application wizard (self-service and staff-assisted/walk-in) |
+| DLAS Calendar | Cause-list / hearings & mediation weekly calendar (Sun–Thu) |
+| DLAS Case Detail | Full case file: history, documents, quick actions, driven by `caseActionState()` |
+| DLAS Lawyer Assignment | Ranked lawyer suggestions for a case + searchable panel directory |
+| DLAS Role Dashboards | Generic dashboard template used for the smaller roles (SCLAO, Labour, Judge, NGO, UDC) |
+| DLAS Channel Simulation | Demo of the various intake channels (IVR, call centre, UDC-assisted, etc.) |
+| DLAS Safe Contact | The "safe contact" messaging permission tool (§2.1 `SAFE_PROFILES`) |
+| DLAS Grievance | Grievance/complaint submission and redress workflow |
+| DLAS National Dashboard | DBLA national administrator view — all-district reporting, mandatory-district config |
+| DLAS Referral Reports | Referral-committee (UzLAC) reporting |
+| DLAS Panel Lawyer | The panel lawyer's own dashboard (assigned cases, honorarium requests) |
+| DLAS Special Mediator | The mediator's own dashboard (accept/decline requests, honorarium) |
+| DLAS Service Desks | UDC / call-centre / NGO desk-specific intake screens |
+| DLAS Mediation | The mediation session workspace itself |
+
+---
+
+*Compiled for planning a re-implementation in a separate codebase. Bangla text has been kept alongside English throughout since the bilingual pairing is itself a functional requirement of the system, not just content.*
